@@ -29,18 +29,8 @@
 		99877C5C2C871364002E535C /* SMBBrowserUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SMBBrowserUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		99D230BD2C883BF5005832C5 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Support/Info.plist,
-			);
-			target = 99877C402C871362002E535C /* SMBBrowser */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		99877C432C871362002E535C /* SMBBrowser */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (99D230BD2C883BF5005832C5 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = SMBBrowser; sourceTree = "<group>"; };
+		99877C432C871362002E535C /* SMBBrowser */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = SMBBrowser; sourceTree = "<group>"; };
 		99877C552C871364002E535C /* SMBBrowserTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = SMBBrowserTests; sourceTree = "<group>"; };
 		99877C5F2C871364002E535C /* SMBBrowserUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = SMBBrowserUITests; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -185,7 +175,7 @@
 				};
 			};
 			buildConfigurationList = 99877C3C2C871362002E535C /* Build configuration list for PBXProject "SMBBrowser" */;
-			compatibilityVersion = "Xcode 12.0";
+			compatibilityVersion = "Xcode 15.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
