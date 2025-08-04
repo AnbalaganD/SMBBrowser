@@ -48,21 +48,24 @@ final class SMBListViewController: NSViewController {
     private func mountSMBShare(
         url: URL,
         username: String,
-        password: String
+        password: String,
+        mountPath: String?
     ) -> Bool {
-        let mountOptions = NSMutableDictionary()
-        
-        mountOptions[kNetFSUserNameKey] = username
-        mountOptions[kNetFSPasswordKey] = password
-        
         var mountRef: Unmanaged<CFArray>?
+        
+        let customMountPath: CFURL?
+        if let mountPath {
+            customMountPath = CFURLCreateWithString(nil, mountPath as CFString, nil)
+        } else {
+            customMountPath = nil
+        }
         
         let status = NetFSMountURLSync(
             url as CFURL,
-            nil,
+            customMountPath,
             username as CFString,
             password as CFString,
-            mountOptions,
+            nil,
             nil,
             &mountRef
         )
@@ -74,6 +77,7 @@ final class SMBListViewController: NSViewController {
             print("Failed to mount \(url.absoluteString) with error code: \(status)")
             return false
         }
+        
     }
 }
 
@@ -171,14 +175,16 @@ extension SMBListViewController: NSTableViewDelegate, NSTableViewDataSource {
 }
 
 extension SMBListViewController: AuthenticationDelegate {
-    func authentication(authentication: Authentication?) {
-        if let authentication,
-           case let Authentication.registerUser(userName, password, service) = authentication {
+    func authentication(authentication: Authentication) {
+        switch authentication {
+        case .guest(mountPath: _): break
+        case let .registerUser(userName, password, mountPath, service):
             print(authentication)
             _ = mountSMBShare(
                 url: URL(string: "smb://\(service.smbService.ipv4!)")!,
                 username: userName,
-                password: password
+                password: password,
+                mountPath: mountPath
             )
         }
     }

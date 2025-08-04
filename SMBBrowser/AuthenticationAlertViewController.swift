@@ -8,17 +8,18 @@
 import Cocoa
 
 enum Authentication {
-    case guest
+    case guest(mountPath: String? = nil)
     case registerUser(
         userName: String,
         password: String,
+        mountPath: String? = nil,
         service: Service
     )
 }
 
 protocol AuthenticationDelegate: NSObject {
     func authentication(
-        authentication: Authentication?
+        authentication: Authentication
     )
 }
 
@@ -34,6 +35,7 @@ final class AuthenticationAlertViewController: NSViewController {
     private var passwordTitleLabel: NSTextField!
     private var nameTextField: NSTextField!
     private var passwordTextField: NSTextField!
+    private var mountPathTextField: NSTextField!
     private var guestModeConstraint = [NSLayoutConstraint]()
     private var registeredUserModeConstraint = [NSLayoutConstraint]()
     
@@ -65,13 +67,22 @@ final class AuthenticationAlertViewController: NSViewController {
     }
     
     @objc private func connectTapped() {
-        delegate?.authentication(
-            authentication: .registerUser(
-                userName: nameTextField.stringValue,
-                password: passwordTextField.stringValue,
-                service: service
+        if guestButton.state == .on {
+            delegate?.authentication(
+                authentication: .guest(
+                    mountPath: mountPathTextField.stringValue
+                )
             )
-        )
+        } else {
+            delegate?.authentication(
+                authentication: .registerUser(
+                    userName: nameTextField.stringValue,
+                    password: passwordTextField.stringValue,
+                    mountPath: mountPathTextField.stringValue,
+                    service: service
+                )
+            )
+        }
         view.window?.close()
         NSApp.abortModal()
     }
@@ -176,8 +187,21 @@ private extension AuthenticationAlertViewController {
         
         passwordTextField = NSTextField()
         passwordTextField.translatesAutoresizingMaskIntoConstraints = false
-        nameTextField.drawsBackground = false
+        passwordTextField.drawsBackground = false
         view.addSubview(passwordTextField)
+        
+        let mountPathTitleLabel = NSTextField()
+        mountPathTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        mountPathTitleLabel.isEditable = false
+        mountPathTitleLabel.stringValue = "Mount Path:"
+        mountPathTitleLabel.drawsBackground = false
+        mountPathTitleLabel.isBezeled = false
+        view.addSubview(mountPathTitleLabel)
+        
+        mountPathTextField = NSTextField()
+        mountPathTextField.translatesAutoresizingMaskIntoConstraints = false
+        mountPathTextField.drawsBackground = false
+        view.addSubview(mountPathTextField)
         
         let cancelButton = NSButton()
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
@@ -199,10 +223,9 @@ private extension AuthenticationAlertViewController {
         view.addSubview(connectButton)
         
         guestModeConstraint.append(contentsOf: [
-            view.heightAnchor.constraint(equalToConstant: 180),
+            view.heightAnchor.constraint(equalToConstant: 205),
             
-            cancelButton.topAnchor.constraint(equalTo: registeredUserButton.bottomAnchor, constant: 20),
-            connectButton.topAnchor.constraint(equalTo: registeredUserButton.bottomAnchor, constant: 20),
+            mountPathTitleLabel.topAnchor.constraint(equalTo: registeredUserButton.bottomAnchor, constant: 20)
         ])
         
         registeredUserModeConstraint.append(contentsOf: [
@@ -222,8 +245,7 @@ private extension AuthenticationAlertViewController {
             passwordTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             passwordTextField.centerYAnchor.constraint(equalTo: passwordTitleLabel.centerYAnchor),
             
-            cancelButton.topAnchor.constraint(equalTo: passwordTitleLabel.bottomAnchor, constant: 20),
-            connectButton.topAnchor.constraint(equalTo: passwordTitleLabel.bottomAnchor, constant: 20),
+            mountPathTitleLabel.topAnchor.constraint(equalTo: passwordTitleLabel.bottomAnchor, constant: 20)
         ])
         
         NSLayoutConstraint.activate([
@@ -245,10 +267,17 @@ private extension AuthenticationAlertViewController {
             registeredUserButton.leadingAnchor.constraint(equalTo: connectAsTextField.trailingAnchor, constant: 10),
             registeredUserButton.topAnchor.constraint(equalTo: guestButton.bottomAnchor, constant: 8),
             
+            cancelButton.topAnchor.constraint(equalTo: mountPathTitleLabel.bottomAnchor, constant: 20),
             cancelButton.trailingAnchor.constraint(equalTo: connectButton.leadingAnchor, constant: -20),
             
+            connectButton.topAnchor.constraint(equalTo: mountPathTitleLabel.bottomAnchor, constant: 20),
             connectButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             connectButton.bottomAnchor.constraint(lessThanOrEqualTo: view.bottomAnchor, constant: -20),
+            
+            mountPathTitleLabel.trailingAnchor.constraint(equalTo: connectAsTextField.trailingAnchor),
+            mountPathTextField.leadingAnchor.constraint(equalTo: mountPathTitleLabel.trailingAnchor, constant: 10),
+            mountPathTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            mountPathTextField.centerYAnchor.constraint(equalTo: mountPathTitleLabel.centerYAnchor)
         ] + registeredUserModeConstraint)
     }
     
